@@ -18,6 +18,14 @@ public class User {
     private Long id;
     private String username;
     private String password;
+    private String jwt;
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.jwt = "";
+        this.roles = new ArrayList<>();
+    }
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();

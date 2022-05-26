@@ -31,9 +31,9 @@ public class ProjektApplication {
 			userService.saveRole(new Role(null, "ROLE_MANAGER"));
 			userService.saveRole(new Role(null, "ROLE_ADMIN"));
 
-			userService.saveUser(new User(null, "John123", "1234", new ArrayList<>()));
-			userService.saveUser(new User(null, "Tadzik", "1234", new ArrayList<>()));
-			userService.saveUser(new User(null, "Pjoter", "1234", new ArrayList<>()));
+			userService.saveUser(new User("John123", "1234"));
+			userService.saveUser(new User("Tadzik", "1234"));
+			userService.saveUser(new User("Pjoter", "1234"));
 
 			userService.addRoleToUser("John123", "ROLE_USER");
 			userService.addRoleToUser("Tadzik", "ROLE_USER");

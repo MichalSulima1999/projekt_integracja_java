@@ -51,6 +51,13 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     }
 
     @Override
+    public User updateJWT(String username, String jwt) {
+        User user = userRepo.findByUsername(username);
+        user.setJwt(jwt);
+        return userRepo.save(user);
+    }
+
+    @Override
     public Role saveRole(Role role) {
         log.info("Saving new role {} to the database", role.getName());
         return roleRepo.save(role);
@@ -68,6 +75,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     public User getUser(String username) {
         log.info("Fetching user {}", username);
         return userRepo.findByUsername(username);
+    }
+
+    @Override
+    public User getUserByJWT(String jwt) {
+        return userRepo.findByjwt(jwt);
     }
 
     @Override
