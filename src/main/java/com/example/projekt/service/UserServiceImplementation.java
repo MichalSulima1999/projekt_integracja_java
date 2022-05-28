@@ -64,6 +64,16 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     }
 
     @Override
+    public Role getRole(Long id) {
+        return roleRepo.findById(id).get();
+    }
+
+    @Override
+    public List<Role> getRoles() {
+        return roleRepo.findAll();
+    }
+
+    @Override
     public void addRoleToUser(String username, String roleName) {
         User user = userRepo.findByUsername(username);
         Role role = roleRepo.findByName(roleName);

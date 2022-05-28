@@ -9,8 +9,10 @@ import com.example.projekt.domain.User;
 import com.example.projekt.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -40,24 +42,63 @@ public class UserResource {
     private Gson gson = new Gson();
     private final UserService userService;
 
-    @GetMapping("/users")
-    public ResponseEntity<List<User>>getUsers() {
-        return ResponseEntity.ok().body(userService.getUsers());
+//    @GetMapping("/admin/users")
+//    public ResponseEntity<List<User>>getUsers() {
+//        return ResponseEntity.ok().body(userService.getUsers());
+//    }
+
+    @GetMapping("/admin/users")
+    public void getUsers(HttpServletResponse response) throws IOException {
+        // TODO: response object with username and roles
+        Collection<UsernameRoles> usernameRoles = new ArrayList<>();
+        Collection<User> users = userService.getUsers();
+        for (User user:
+             users) {
+            UsernameRoles usernameRoles1 = new UsernameRoles(user.getUsername(), new ArrayList<>());
+            for (Role role :
+                    user.getRoles()) {
+                usernameRoles1.addToRoles(role.getName());
+            }
+            usernameRoles.add(usernameRoles1);
+        }
+        log.info(String.valueOf(usernameRoles));
+        String json = gson.toJson(usernameRoles);
+        log.info(json);
+        response.getWriter().write(json);
     }
 
-    @PostMapping("/user/register")
-    public ResponseEntity<User>saveUser(@RequestBody User user) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
+    @PostMapping("/admin/user/register")
+    public ResponseEntity<User>saveUser(@RequestBody Map<String, Object> req, HttpServletResponse response) throws IOException {
+        if(userService.getUser((String) req.get("username")) != null) {
+            response.getWriter().write("User already exists");
+            response.setStatus(FORBIDDEN.value());
+            return null;
+        }
+
+
+        User user = new User((String) req.get("username"), (String) req.get("password"));
+        for (Integer role :
+                ((ArrayList<Integer>)req.get("roles"))) {
+            user.addRole(userService.getRole((role.longValue())));
+        }
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/admin/user/register").toUriString());
         return ResponseEntity.created(uri).body(userService.saveUser(user));
     }
 
-    @PostMapping("/role/save")
+    // TODO: Get roles
+
+    @GetMapping("/admin/roles")
+    public ResponseEntity<List<Role>> getUsers() {
+        return ResponseEntity.ok().body(userService.getRoles());
+    }
+
+    @PostMapping("/admin/role/save")
     public ResponseEntity<Role>saveRole(@RequestBody Role role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
 
-    @PostMapping("/role/addtouser")
+    @PostMapping("/admin/role/addtouser")
     public ResponseEntity<?>addRoleToUser(@RequestBody RoleToUserForm form) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
         userService.addRoleToUser(form.getUsername(), form.getRoleName());
@@ -140,5 +181,20 @@ class TokenAndRoles {
     public TokenAndRoles(String accessToken, Collection<Role> roles) {
         this.accessToken = accessToken;
         this.roles = roles;
+    }
+}
+
+@Data
+class UsernameRoles {
+    private String username;
+    private Collection<String> roles = new ArrayList<>();
+
+    public UsernameRoles(String username, Collection<String> roles) {
+        this.username = username;
+        this.roles = roles;
+    }
+
+    public void addToRoles(String roleName) {
+        roles.add(roleName);
     }
 }

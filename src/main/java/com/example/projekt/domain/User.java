@@ -16,6 +16,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @Column(unique=true)
     private String username;
     private String password;
     private String jwt;
@@ -27,6 +28,11 @@ public class User {
         this.roles = new ArrayList<>();
     }
 
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
 }
+

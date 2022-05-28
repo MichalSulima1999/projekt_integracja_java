@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://integracja.pl/soap"
+           elementFormDefault="qualified"
+           targetNamespace="http://integracja.pl/soap">
+    <xs:element name="getCpu">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="cpu" type="tns:cpu" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="cpu">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="cores" type="xs:int"/>
+            <xs:element name="threads" type="xs:int"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="launch_date" type="xs:date"/>
+            <xs:element name="lithography" type="xs:int"/>
+            <xs:element name="base_frequency" type="xs:int"/>
+            <xs:element name="turbo_frequency" type="xs:string"/>
+            <xs:element name="tdp" type="xs:int"/>
+            <xs:element name="socket" type="xs:string"/>
+            <xs:element name="manufacturer" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
