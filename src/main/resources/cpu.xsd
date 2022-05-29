@@ -3,7 +3,7 @@
            xmlns:tns="http://integracja.pl/soap"
            elementFormDefault="qualified"
            targetNamespace="http://integracja.pl/soap">
-    <xs:element name="getCpu">
+    <xs:element name="getCpuByIdRequest">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="id" type="xs:long" />
@@ -11,7 +11,7 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="getResponse">
+    <xs:element name="getCpuByIdResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="cpu" type="tns:cpu" />

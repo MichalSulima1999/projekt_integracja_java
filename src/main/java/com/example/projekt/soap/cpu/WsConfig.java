@@ -23,18 +23,18 @@ public class WsConfig extends WsConfigurerAdapter {
         return new ServletRegistrationBean<>(servlet, "/ws/*");
     }
 
-    @Bean(name = "countries")
-    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema countriesSchema) {
+    @Bean(name = "cpus")
+    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema cpusSchema) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
         wsdl11Definition.setPortTypeName("CpusPort");
         wsdl11Definition.setLocationUri("/ws");
         wsdl11Definition.setTargetNamespace("http://integracja.pl/soap");
-        wsdl11Definition.setSchema(countriesSchema);
+        wsdl11Definition.setSchema(cpusSchema);
         return wsdl11Definition;
     }
 
     @Bean
-    public XsdSchema countriesSchema() {
+    public XsdSchema cpusSchema() {
         return new SimpleXsdSchema(new ClassPathResource("cpu.xsd"));
     }
 }
