@@ -1,16 +1,31 @@
 package com.example.projekt.soap.cpu;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.projekt.soap.cpu.pl.integracja.soap.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static java.util.Arrays.stream;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Endpoint
 @Slf4j
@@ -38,7 +53,12 @@ public class CpuEndpoint {
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getAllCpusRequest")
     @ResponsePayload
-    public GetAllCpusResponse getAllMovies(@RequestPayload GetAllCpusRequest request) {
+    public GetAllCpusResponse getAllCpus(@RequestPayload GetAllCpusRequest request) {
+        log.info(request.toString());
+//        String[] roles = {"ROLE_ADMIN"};
+//        if(!authorized(req, roles)) {
+//            return null;
+//        }
         GetAllCpusResponse response = new GetAllCpusResponse();
         List<Cpu> cpuTypeList = new ArrayList<Cpu>();
         List<CpuEntity> cpuEntities = service.getAllEntities();
@@ -46,8 +66,11 @@ public class CpuEndpoint {
             Cpu cpuType = new Cpu();
             BeanUtils.copyProperties(entity, cpuType);
             cpuTypeList.add(cpuType);
+//            log.info(cpuType.toString());
+//            log.info(entity.toString());
         }
         response.getCpu().addAll(cpuTypeList);
+
 
         return response;
 
@@ -55,7 +78,7 @@ public class CpuEndpoint {
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "addCpuRequest")
     @ResponsePayload
-    public AddCpuResponse addMovie(@RequestPayload AddCpuRequest request) {
+    public AddCpuResponse addCpu(@RequestPayload AddCpuRequest request) {
         AddCpuResponse response = new AddCpuResponse();
         Cpu newCpuType = new Cpu();
         ServiceStatus serviceStatus = new ServiceStatus();
@@ -81,7 +104,7 @@ public class CpuEndpoint {
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "updateCpuRequest")
     @ResponsePayload
-    public UpdateCpuResponse updateMovie(@RequestPayload UpdateCpuRequest request) {
+    public UpdateCpuResponse updateCpu(@RequestPayload UpdateCpuRequest request) {
         UpdateCpuResponse response = new UpdateCpuResponse();
         ServiceStatus serviceStatus = new ServiceStatus();
         // 1. Find if cpu available
@@ -140,6 +163,26 @@ public class CpuEndpoint {
 
         response.setServiceStatus(serviceStatus);
         return response;
+    }
+
+    public boolean authorized(HttpServletRequest request, String[] allowedRoles){
+        boolean auth = false;
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            try {
+                String token = authorizationHeader.substring("Bearer ".length());
+                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes(StandardCharsets.UTF_8));
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(token);
+                String username = decodedJWT.getSubject();
+                String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+                auth = Arrays.asList(roles).containsAll(Arrays.asList(allowedRoles));
+            } catch (Exception exception) {
+                log.error("Error logging in {}", exception.getMessage());
+            }
+
+        }
+        return auth;
     }
 
 }
