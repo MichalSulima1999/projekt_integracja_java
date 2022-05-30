@@ -72,7 +72,7 @@ public class Cpu {
     protected int lithography;
     @XmlElement(name = "base_frequency")
     protected int baseFrequency;
-    @XmlElement(name = "turbo_frequency", required = true)
+    @XmlElement(name = "turbo_frequency")
     protected String turboFrequency;
     protected int tdp;
     @XmlElement(required = true)

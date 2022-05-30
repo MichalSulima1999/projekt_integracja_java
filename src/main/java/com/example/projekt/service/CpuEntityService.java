@@ -1,4 +1,6 @@
-package com.example.projekt.soap.cpu;
+package com.example.projekt.service;
+
+import com.example.projekt.domain.CpuEntity;
 
 import java.util.List;
 

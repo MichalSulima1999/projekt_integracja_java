@@ -1,7 +1,7 @@
 package com.example.projekt.api;
 
-import com.example.projekt.soap.cpu.CpuEntity;
-import com.example.projekt.soap.cpu.CpuEntityService;
+import com.example.projekt.domain.CpuEntity;
+import com.example.projekt.service.CpuEntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

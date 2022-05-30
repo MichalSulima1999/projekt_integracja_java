@@ -1,12 +1,9 @@
-package com.example.projekt.soap.cpu;
+package com.example.projekt.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -23,7 +20,8 @@ public class CpuEntity implements Serializable {
     private int cores;
     private int threads;
     private String name;
-    private Date launch_date;
+    @Column(name = "launch_date")
+    private Date launchDate;
     protected int lithography;
     protected int base_frequency;
     protected String turbo_frequency;
@@ -35,7 +33,7 @@ public class CpuEntity implements Serializable {
         this.cores = cores;
         this.threads = threads;
         this.name = name;
-        this.launch_date = launch_date;
+        this.launchDate = launch_date;
         this.lithography = lithography;
         this.base_frequency = base_frequency;
         this.turbo_frequency = turbo_frequency;
@@ -48,7 +46,7 @@ public class CpuEntity implements Serializable {
         this.cores = cores;
         this.threads = threads;
         this.name = name;
-        this.launch_date = launch_date;
+        this.launchDate = launch_date;
         this.lithography = lithography;
         this.base_frequency = base_frequency;
         this.tdp = tdp;
