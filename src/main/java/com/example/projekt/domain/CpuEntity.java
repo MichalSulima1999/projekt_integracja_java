@@ -15,7 +15,7 @@ public class CpuEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private int cores;
     private int threads;
@@ -23,8 +23,10 @@ public class CpuEntity implements Serializable {
     @Column(name = "launch_date")
     private Date launchDate;
     protected int lithography;
-    protected int base_frequency;
-    protected String turbo_frequency;
+    @Column(name = "base_frequency")
+    protected int baseFrequency;
+    @Column(name = "turbo_frequency")
+    protected String turboFrequency;
     protected int tdp;
     protected String socket;
     protected String manufacturer;
@@ -35,8 +37,8 @@ public class CpuEntity implements Serializable {
         this.name = name;
         this.launchDate = launch_date;
         this.lithography = lithography;
-        this.base_frequency = base_frequency;
-        this.turbo_frequency = turbo_frequency;
+        this.baseFrequency = base_frequency;
+        this.turboFrequency = turbo_frequency;
         this.tdp = tdp;
         this.socket = socket;
         this.manufacturer = manufacturer;
@@ -48,7 +50,7 @@ public class CpuEntity implements Serializable {
         this.name = name;
         this.launchDate = launch_date;
         this.lithography = lithography;
-        this.base_frequency = base_frequency;
+        this.baseFrequency = base_frequency;
         this.tdp = tdp;
         this.socket = socket;
         this.manufacturer = manufacturer;

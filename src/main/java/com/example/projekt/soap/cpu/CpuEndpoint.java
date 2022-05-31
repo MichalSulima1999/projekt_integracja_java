@@ -54,7 +54,6 @@ public class CpuEndpoint {
         GetAllCpusResponse response = new GetAllCpusResponse();
         List<Cpu> cpuTypeList = new ArrayList<>();
         List<CpuEntity> cpuEntities = service.getAllEntities();
-        //List<CpuEntity> cpuEntities = cpuEntityRepository.findAll(Sort.by(Sort.Direction.ASC, "launchDate"));
         for (CpuEntity entity : cpuEntities) {
             Cpu cpuType = new Cpu();
             BeanUtils.copyProperties(entity, cpuType);
@@ -62,11 +61,9 @@ public class CpuEndpoint {
             calendar.setTime(entity.getLaunchDate());
             XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
             cpuType.setLaunchDate(date2);
-            cpuType.setBaseFrequency(entity.getBase_frequency());
-            cpuType.setTurboFrequency(entity.getTurbo_frequency());
+            cpuType.setBaseFrequency(entity.getBaseFrequency());
+            cpuType.setTurboFrequency(entity.getTurboFrequency());
             cpuTypeList.add(cpuType);
-//            log.info(cpuType.toString());
-            log.info(entity.toString());
         }
         response.getCpu().addAll(cpuTypeList);
 
@@ -83,7 +80,8 @@ public class CpuEndpoint {
         GetAllCpusByDateResponse response = new GetAllCpusByDateResponse();
         List<Cpu> cpuTypeList = new ArrayList<>();
         //List<CpuEntity> cpuEntities = service.getAllEntities();
-        List<CpuEntity> cpuEntities = cpuEntityRepository.findAll(Sort.by(Sort.Direction.ASC, "launchDate"));
+        //List<CpuEntity> cpuEntities = cpuEntityRepository.findAll(Sort.by(Sort.Direction.ASC, "launchDate"));
+        List<CpuEntity> cpuEntities = service.getAllEntitiesSortedByDate();
         for (CpuEntity entity : cpuEntities) {
             Cpu cpuType = new Cpu();
             BeanUtils.copyProperties(entity, cpuType);
@@ -91,10 +89,9 @@ public class CpuEndpoint {
             calendar.setTime(entity.getLaunchDate());
             XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
             cpuType.setLaunchDate(date2);
-            cpuType.setBaseFrequency(entity.getBase_frequency());
-            cpuType.setTurboFrequency(entity.getTurbo_frequency());
+            cpuType.setBaseFrequency(entity.getBaseFrequency());
+            cpuType.setTurboFrequency(entity.getTurboFrequency());
             cpuTypeList.add(cpuType);
-            log.info(entity.toString());
         }
         response.getCpu().addAll(cpuTypeList);
 

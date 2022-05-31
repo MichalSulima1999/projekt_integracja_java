@@ -4,6 +4,7 @@ import com.example.projekt.domain.CpuEntity;
 import com.example.projekt.service.CpuEntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -14,6 +15,7 @@ import java.net.URI;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping("/api")
@@ -25,6 +27,16 @@ public class CpuResource {
     @GetMapping("/cpu")
     public ResponseEntity<List<CpuEntity>> showCpus(HttpServletResponse response) {
         return ResponseEntity.ok().body(cpuEntityService.getAllEntities());
+    }
+
+    @GetMapping("/cpu/{id}")
+    public ResponseEntity<CpuEntity> showCpu(@PathVariable long id, HttpServletResponse response) {
+        return ResponseEntity.ok().body(cpuEntityService.getEntityById(id));
+    }
+
+    @GetMapping("/cpu/page/{offset}/{pageSize}")
+    public ResponseEntity<Page<CpuEntity>> showCpusPaginated(@PathVariable int offset, @PathVariable int pageSize) {
+        return ResponseEntity.ok().body(cpuEntityService.getAllEntitiesWithPagination(offset, pageSize));
     }
 
     @PostMapping("/cpu")
@@ -55,13 +67,13 @@ public class CpuResource {
         return false;
     }
 
-    @DeleteMapping("/cpu")
-    public boolean deleteCpu(@RequestParam(name = "id") long id, HttpServletResponse response) throws IOException {
+    @DeleteMapping("/cpu/{id}")
+    public boolean deleteCpu(@PathVariable long id, HttpServletResponse response) throws IOException {
         if (cpuEntityService.deleteEntity(id)) {
-            response.getWriter().write("Cpu deleted successfully!");
+            ResponseEntity.ok().body("Deleted successfully!");
             return true;
         } else {
-            response.getWriter().write("Error during delete!");
+            ResponseEntity.status(NOT_FOUND).body("Error!");
         }
         return false;
     }
