@@ -1,5 +1,7 @@
 package com.example.projekt.file;
 
+import com.example.projekt.domain.CpuEntity;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -10,13 +12,13 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Procesory {
     @XmlElement(name="procesor")
-    private List<Procesor> procesory = null;
+    private List<CpuEntity> procesory = null;
 
-    public List<Procesor> getProcesory() {
+    public List<CpuEntity> getProcesory() {
         return procesory;
     }
 
-    public void setProcesory(List<Procesor> procesory) {
+    public void setProcesory(List<CpuEntity> procesory) {
         this.procesory = procesory;
     }
 }
