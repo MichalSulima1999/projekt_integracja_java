@@ -32,8 +32,8 @@ public class JsonMarshaller  {
                 pstmt.setString(3,cpu.getName());
                 pstmt.setDate(4, (Date) cpu.getLaunchDate());
                 pstmt.setInt(5,cpu.getLithography());
-                pstmt.setInt(6,cpu.getBase_frequency());
-                pstmt.setString(7,cpu.getTurbo_frequency());
+                pstmt.setInt(6,cpu.getBaseFrequency());
+                pstmt.setString(7,cpu.getTurboFrequency());
                 pstmt.setInt(8,cpu.getTdp());
                 pstmt.setString(9,cpu.getSocket());
                 pstmt.setString(10,cpu.getManufacturer());
