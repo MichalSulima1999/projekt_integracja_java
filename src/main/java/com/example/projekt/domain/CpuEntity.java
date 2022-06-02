@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Table(name = "cpu")
+@XmlRootElement
 public class CpuEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -22,14 +24,15 @@ public class CpuEntity implements Serializable {
     private String name;
     @Column(name = "launch_date")
     private Date launchDate;
-    protected int lithography;
+    private int lithography;
     @Column(name = "base_frequency")
-    protected int baseFrequency;
+    private int baseFrequency;
     @Column(name = "turbo_frequency")
-    protected String turboFrequency;
-    protected int tdp;
-    protected String socket;
-    protected String manufacturer;
+    private String turboFrequency;
+    private int tdp;
+    @Column(length = 11)
+    private String socket;
+    private String manufacturer;
 
     public CpuEntity(int cores, int threads, String name, Date launch_date, int lithography, int base_frequency, String turbo_frequency, int tdp, String socket, String manufacturer) {
         this.cores = cores;

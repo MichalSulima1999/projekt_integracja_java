@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
 public class CpuEntityServiceImplementation implements CpuEntityService {
     private CpuEntityRepository repository;
 
@@ -62,6 +61,17 @@ public class CpuEntityServiceImplementation implements CpuEntityService {
         }
     }
 
+    @Transactional
+    @Override
+    public List<CpuEntity> addEntities(List<CpuEntity> cpuEntities) {
+        for (CpuEntity cpu :
+                cpuEntities) {
+            repository.save(cpu);
+        }
+        return cpuEntities;
+    }
+
+    @Transactional
     @Override
     public boolean updateEntity(CpuEntity entity) {
         try {
@@ -82,4 +92,19 @@ public class CpuEntityServiceImplementation implements CpuEntityService {
             return false;
         }
     }
+
+    @Transactional
+    @Override
+    public boolean deleteEntities(List<Long> ids) {
+        try {
+            for (Long id :
+                    ids) {
+                repository.deleteById(id);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

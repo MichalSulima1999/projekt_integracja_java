@@ -1,23 +1,33 @@
 package com.example.projekt.api;
 
 import com.example.projekt.domain.CpuEntity;
+import com.example.projekt.file.json.JsonExporter;
+import com.example.projekt.file.xml.Cpus;
+import com.example.projekt.file.xml.XmlExporter;
 import com.example.projekt.service.CpuEntityService;
 import com.google.gson.Gson;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -29,6 +39,10 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class CpuResource {
     private Gson gson = new Gson();
     private final CpuEntityService cpuEntityService;
+    @Autowired
+    private JsonExporter jsonExporter;
+    @Autowired
+    private XmlExporter xmlExporter;
 
     @GetMapping("/cpu")
     public ResponseEntity<List<CpuEntity>> showCpus() {
@@ -89,17 +103,66 @@ public class CpuResource {
         return false;
     }
 
-    @GetMapping("/cpu/download/json")
-    public ResponseEntity<Resource> downloadJson() throws IOException {
-
-        String file = gson.toJson(cpuEntityService.getAllEntities());
-        log.info(file);
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-
-        return ResponseEntity.ok()
-                .header("Content-Disposition")
-                .contentLength(file.length())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
+    @DeleteMapping("/cpu/deleteMultiple")
+    public boolean deleteCpus(@RequestBody IdWrapper ids) throws IOException {
+        if (cpuEntityService.deleteEntities(ids.getIds())) {
+            ResponseEntity.ok().body("Deleted successfully!");
+            return true;
+        } else {
+            ResponseEntity.status(NOT_FOUND).body("Error!");
+        }
+        return false;
     }
+
+    @GetMapping("/cpu/download/json")
+    public ResponseEntity<byte[]> downloadJson() {
+        List<CpuEntity> cpus = cpuEntityService.getAllEntities();
+        String cpuJsonString = jsonExporter.export(cpus);
+        byte[] cpuJsonBytes = cpuJsonString.getBytes(StandardCharsets.UTF_8);
+
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=cpus.json")
+                .contentType(MediaType.APPLICATION_JSON)
+                .contentLength(cpuJsonBytes.length)
+                .body(cpuJsonBytes);
+    }
+
+    @GetMapping("/cpu/download/xml")
+    public ResponseEntity<byte[]> downloadXml() {
+        List<CpuEntity> cpus = cpuEntityService.getAllEntities();
+        String cpuXmlString = xmlExporter.jaxbObjectToXML(cpus);
+        byte[] cpuJsonBytes = cpuXmlString.getBytes(StandardCharsets.UTF_8);
+
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=cpus.xml")
+                .contentType(MediaType.APPLICATION_JSON)
+                .contentLength(cpuJsonBytes.length)
+                .body(cpuJsonBytes);
+    }
+
+    @PostMapping("/cpu/upload/json")
+    public String uploadJson(@RequestParam("file") MultipartFile file) throws IOException {
+        String content = new String(file.getBytes(), StandardCharsets.UTF_8);
+        List<CpuEntity> cpuEntities = jsonExporter.importJson(content);
+        log.info(cpuEntities.toString());
+        // TODO: Save entities to DB
+        cpuEntityService.addEntities(cpuEntities);
+        return "Success!";
+    }
+
+    @PostMapping("/cpu/upload/xml")
+    public String uploadXml(@RequestParam("file") MultipartFile file) throws IOException, JAXBException {
+        String content = new String(file.getBytes(), StandardCharsets.UTF_8);
+        Cpus cpus = xmlExporter.jaxbXmlToObject(content);
+        log.info(cpus.toString());
+        // TODO: Save entities to DB
+        return "Success!";
+    }
+}
+
+@Data
+class IdWrapper{
+    List<Long> ids;
 }

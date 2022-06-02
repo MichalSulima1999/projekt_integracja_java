@@ -85,8 +85,6 @@ public class UserResource {
         return ResponseEntity.created(uri).body(userService.saveUser(user));
     }
 
-    // TODO: Get roles
-
     @GetMapping("/admin/roles")
     public ResponseEntity<List<Role>> getUsers() {
         return ResponseEntity.ok().body(userService.getRoles());

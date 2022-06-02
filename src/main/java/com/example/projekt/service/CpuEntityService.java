@@ -12,6 +12,8 @@ public interface CpuEntityService {
     public List<CpuEntity> getAllEntitiesSortedByDate();
     public Page<CpuEntity> getAllEntitiesWithPagination(int offset, int pageSize);
     public CpuEntity addEntity(CpuEntity entity);
+    public List<CpuEntity> addEntities(List<CpuEntity> cpuEntities);
     public boolean updateEntity(CpuEntity entity);
     public boolean deleteEntity(long id);
+    public boolean deleteEntities(List<Long> ids);
 }
