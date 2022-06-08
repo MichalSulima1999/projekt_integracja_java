@@ -65,7 +65,12 @@ public class CpuEntityServiceImplementation implements CpuEntityService {
     public List<CpuEntity> addEntities(List<CpuEntity> cpuEntities) {
         for (CpuEntity cpu :
                 cpuEntities) {
-            repository.save(cpu);
+            try {
+                repository.save(cpu);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
         return cpuEntities;
     }

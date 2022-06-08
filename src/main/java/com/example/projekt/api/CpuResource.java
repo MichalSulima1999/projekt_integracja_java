@@ -147,7 +147,7 @@ public class CpuResource {
         String content = new String(file.getBytes(), StandardCharsets.UTF_8);
         List<CpuEntity> cpuEntities = jsonExporter.importJson(content);
         log.info(cpuEntities.toString());
-        // TODO: Save entities to DB
+
         cpuEntityService.addEntities(cpuEntities);
         return "Success!";
     }
@@ -157,7 +157,8 @@ public class CpuResource {
         String content = new String(file.getBytes(), StandardCharsets.UTF_8);
         Cpus cpus = xmlExporter.jaxbXmlToObject(content);
         log.info(cpus.toString());
-        // TODO: Save entities to DB
+
+        cpuEntityService.addEntities(cpus.getCpuEntities());
         return "Success!";
     }
 }
