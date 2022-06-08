@@ -2,7 +2,6 @@ package com.example.projekt.service;
 
 import com.example.projekt.domain.CpuEntity;
 import com.example.projekt.repo.CpuEntityRepository;
-import com.example.projekt.service.CpuEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

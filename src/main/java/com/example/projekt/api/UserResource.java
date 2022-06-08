@@ -9,10 +9,8 @@ import com.example.projekt.domain.User;
 import com.example.projekt.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -29,9 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -39,13 +35,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 @Slf4j
 public class UserResource {
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
     private final UserService userService;
-
-//    @GetMapping("/admin/users")
-//    public ResponseEntity<List<User>>getUsers() {
-//        return ResponseEntity.ok().body(userService.getUsers());
-//    }
 
     @GetMapping("/admin/users")
     public void getUsers(HttpServletResponse response) throws IOException {
@@ -98,14 +89,12 @@ public class UserResource {
 
     @PostMapping("/admin/role/addtouser")
     public ResponseEntity<?>addRoleToUser(@RequestBody RoleToUserForm form) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
         userService.addRoleToUser(form.getUsername(), form.getRoleName());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response, @CookieValue(name = "jwt") String jwt) throws IOException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
 
         if(jwt == null) {
             throw new RuntimeException("Refresh token is missing");
@@ -116,10 +105,9 @@ public class UserResource {
         }
 
         try {
-            String refresh_token = jwt;
             Algorithm algorithm = Algorithm.HMAC256("secret".getBytes(StandardCharsets.UTF_8));
             JWTVerifier verifier = JWT.require(algorithm).build();
-            DecodedJWT decodedJWT = verifier.verify(refresh_token);
+            DecodedJWT decodedJWT = verifier.verify(jwt);
             String username = decodedJWT.getSubject();
             String access_token = JWT.create()
                     .withSubject(user.getUsername())
